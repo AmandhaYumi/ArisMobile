@@ -1,56 +1,65 @@
-# Welcome to your Expo app 👋
+# ARIS - Agricultura Inteligente Espacial
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Aplicativo mobile desenvolvido em React Native com Expo para a Global Solution 2026/1.
 
-## Get started
+## Integrantes
 
-1. Install dependencies
+- Nome do integrante 1 - RM
+- Nome do integrante 2 - RM
+- Nome do integrante 3 - RM
 
-   ```bash
-   npm install
-   ```
+## Links
 
-2. Start the app
+- GitHub Classroom: coloque aqui o link do repositorio
+- Video no YouTube: coloque aqui o link do video
 
-   ```bash
-   npx expo start
-   ```
+## Descricao da solucao
 
-In the output, you'll find options to open the app in a
+O ARIS conecta tecnologias de exploracao espacial com agricultura sustentavel na Terra. A proposta utiliza IoT, inteligencia artificial e dados climaticos para monitorar estufas inteligentes, reduzir desperdicio de agua e apoiar decisoes de cultivo.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+O aplicativo permite acessar um painel de telemetria, visualizar alertas preditivos, gerenciar culturas agricolas via CRUD integrado com API REST e acompanhar dados de sensores em uma interface inspirada em Marte.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Funcionalidades mobile
 
-## Get a fresh project
+- 6 telas: inicial, login, dashboard, culturas, alertas e cadastro/perfil.
+- Navegacao com React Navigation.
+- CRUD de culturas usando Axios e API REST.
+- Tratamento de loading, erros e feedback visual.
+- Identidade visual personalizada com tema espacial, terroso e vermelho escuro.
 
-When you're ready, run:
+## Configuracao da API
+
+Por padrao o app chama:
 
 ```bash
-npm run reset-project
+http://10.0.2.2:8080/api/culturas
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Para trocar a URL, use a variavel:
 
-### Other setup steps
+```bash
+EXPO_PUBLIC_API_URL=http://SEU_IP:8080/api
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+Endpoints esperados para o CRUD:
 
-## Learn more
+- `GET /culturas`
+- `POST /culturas`
+- `PUT /culturas/{id}`
+- `DELETE /culturas/{id}`
 
-To learn more about developing your project with Expo, look at the following resources:
+Campos usados no app:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+- `nome`
+- `especie`
+- `areaCultivo`
+- `status`
 
-## Join the community
+## Como executar
 
-Join our community of developers creating universal apps.
+```bash
+npm install
+npm start
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Depois, abra no Expo Go, emulador Android ou navegador.
