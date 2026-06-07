@@ -3,10 +3,10 @@ import { Pressable, Text, View } from 'react-native';
 import { theme } from '../styles/tema';
 
 const items = [
-  { route: 'Dashboard', label: 'Painel', icon: '⌂' },
+  { route: 'Dashboard', label: 'Painel', icon: 'Home' },
   { route: 'Plantacoes', label: 'Culturas', icon: '+' },
   { route: 'Alertas', label: 'Alertas', icon: '!' },
-  { route: 'Cadastro', label: 'Conta', icon: 'ID' },
+  { route: 'Perfil', label: 'Perfil', icon: 'ID' },
 ];
 
 export default function BottomNavigation({ navigation, active }) {
@@ -19,7 +19,7 @@ export default function BottomNavigation({ navigation, active }) {
         bottom: 20,
         minHeight: 68,
         borderRadius: 18,
-        backgroundColor: 'rgba(16, 10, 8, 0.96)',
+        backgroundColor: 'rgba(13, 8, 7, 0.98)',
         borderWidth: 1,
         borderColor: theme.colors.border,
         flexDirection: 'row',
@@ -30,6 +30,7 @@ export default function BottomNavigation({ navigation, active }) {
     >
       {items.map((item) => {
         const selected = active === item.route;
+
         return (
           <Pressable
             key={item.route}

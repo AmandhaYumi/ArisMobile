@@ -1,5 +1,5 @@
 {
-  "name": "aris",
+  "name": "agro-orbit",
   "main": "index.js",
   "version": "1.0.0",
   "dependencies": {
@@ -41,7 +41,7 @@
     "android": "set EXPO_ROUTER_DISABLE_RN_NAVIGATION_CHECK=1&& expo start --android",
     "ios": "set EXPO_ROUTER_DISABLE_RN_NAVIGATION_CHECK=1&& expo start --ios",
     "web": "set EXPO_ROUTER_DISABLE_RN_NAVIGATION_CHECK=1&& expo start --web",
-    "lint": "expo lint"
+    "lint": "eslint ."
   },
   "private": true
 }

@@ -9,7 +9,7 @@ export default function NavigationCard({ title, value, detail, color = theme.col
       style={{
         width: '48%',
         minHeight: 126,
-        borderRadius: theme.radius.md,
+        borderRadius: theme.radius.lg,
         borderWidth: 1,
         borderColor: theme.colors.border,
         backgroundColor: theme.colors.card,

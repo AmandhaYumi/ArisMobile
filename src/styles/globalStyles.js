@@ -6,6 +6,13 @@ export const globalStyles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.background,
   },
+  backgroundImage: {
+    flex: 1,
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(18, 9, 7, 0.82)',
+  },
   safe: {
     flex: 1,
   },
@@ -16,8 +23,8 @@ export const globalStyles = StyleSheet.create({
   title: {
     color: theme.colors.text,
     fontSize: 28,
-    fontWeight: '800',
-    letterSpacing: 0,
+    fontWeight: '900',
+    letterSpacing: -0.3,
   },
   subtitle: {
     color: theme.colors.muted,
@@ -30,6 +37,13 @@ export const globalStyles = StyleSheet.create({
     borderColor: theme.colors.border,
     borderWidth: 1,
     borderRadius: theme.radius.md,
+    padding: theme.spacing.md,
+  },
+  cardStrong: {
+    backgroundColor: theme.colors.surface,
+    borderColor: theme.colors.border,
+    borderWidth: 1,
+    borderRadius: theme.radius.lg,
     padding: theme.spacing.md,
   },
   label: {
@@ -61,6 +75,21 @@ export const globalStyles = StyleSheet.create({
     fontWeight: '800',
     fontSize: 15,
   },
+  buttonSecondary: {
+    minHeight: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: theme.radius.sm,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    backgroundColor: 'rgba(255,255,255,0.03)',
+    paddingHorizontal: theme.spacing.md,
+  },
+  buttonSecondaryText: {
+    color: theme.colors.accent,
+    fontWeight: '800',
+    fontSize: 15,
+  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -69,5 +98,18 @@ export const globalStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+  },
+  chip: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: 'rgba(216, 106, 74, 0.14)',
+    borderWidth: 1,
+    borderColor: 'rgba(216, 106, 74, 0.24)',
+  },
+  chipText: {
+    color: theme.colors.accent,
+    fontWeight: '800',
+    fontSize: 12,
   },
 });

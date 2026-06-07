@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "aris",
-    "slug": "aris",
+    "name": "agro-orbit",
+    "slug": "agro-orbit",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./src/assets/logo.png",
-    "scheme": "aris",
+    "scheme": "agroorbit",
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./src/assets/logo.png"
@@ -18,7 +18,7 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "output": "static",
+      "output": "single",
       "favicon": "./src/assets/favicon.ico"
     },
     "plugins": [
@@ -34,7 +34,6 @@
       ]
     ],
     "experiments": {
-      "typedRoutes": true,
       "reactCompiler": true
     }
   }

@@ -1,4 +1,4 @@
-# ARIS - Agricultura Inteligente Espacial
+# Agricultura Inteligente Espacial
 
 Aplicativo mobile desenvolvido em React Native com Expo para a Global Solution 2026/1.
 
@@ -10,29 +10,29 @@ Aplicativo mobile desenvolvido em React Native com Expo para a Global Solution 2
 
 ## Links
 
-- GitHub Classroom: coloque aqui o link do repositorio
-- Video no YouTube: coloque aqui o link do video
+- GitHub Classroom: cole aqui o link do repositorio
+- Video no YouTube: cole aqui o link do video
 
 ## Descricao da solucao
 
-O ARIS conecta tecnologias de exploracao espacial com agricultura sustentavel na Terra. A proposta utiliza IoT, inteligencia artificial e dados climaticos para monitorar estufas inteligentes, reduzir desperdicio de agua e apoiar decisoes de cultivo.
+O aplicativo apresenta uma interface mobile para monitoramento de cultivo inteligente, com foco em usabilidade, identidade visual terrosa e fluxo simples de acesso.
 
-O aplicativo permite acessar um painel de telemetria, visualizar alertas preditivos, gerenciar culturas agricolas via CRUD integrado com API REST e acompanhar dados de sensores em uma interface inspirada em Marte.
+A experiencia inclui tela inicial com escolha entre login e cadastro, navegacao com React Navigation, perfil com sair e excluir conta, dashboard, alertas e um CRUD completo de culturas integrado com API REST.
 
 ## Funcionalidades mobile
 
-- 6 telas: inicial, login, dashboard, culturas, alertas e cadastro/perfil.
+- 7 telas: inicial, login, cadastro, perfil, painel, culturas e alertas.
 - Navegacao com React Navigation.
 - CRUD de culturas usando Axios e API REST.
 - Tratamento de loading, erros e feedback visual.
-- Identidade visual personalizada com tema espacial, terroso e vermelho escuro.
+- Identidade visual personalizada com tema escuro em tons de vermelho e marrom.
 
 ## Configuracao da API
 
 Por padrao o app chama:
 
 ```bash
-http://10.0.2.2:8080/api/culturas
+http://10.0.2.2:8080/api
 ```
 
 Para trocar a URL, use a variavel:

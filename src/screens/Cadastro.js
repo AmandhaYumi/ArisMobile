@@ -1,45 +1,159 @@
 import React, { useState } from 'react';
-import { Alert, Pressable, SafeAreaView, ScrollView, Text, TextInput, View } from 'react-native';
-import BottomNavigation from '../components/BottomNavigation';
-import Header from '../components/Header';
+import { Alert, Image, ImageBackground, Pressable, SafeAreaView, ScrollView, Text, TextInput, View } from 'react-native';
+import { useAuth } from '../context/AuthContext';
 import { globalStyles } from '../styles/globalStyles';
 import { theme } from '../styles/tema';
 
 export default function Cadastro({ navigation }) {
-  const [nome, setNome] = useState('Equipe ARIS');
-  const [estufa, setEstufa] = useState('Ares-01');
-  const [local, setLocal] = useState('Sao Paulo');
+  const { signIn } = useAuth();
+  const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [salvando, setSalvando] = useState(false);
 
-  function salvarPerfil() {
-    Alert.alert('Perfil atualizado', 'Dados prontos para envio ao endpoint de usuarios/estufas.');
+  function voltarInicio() {
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Inicial' }],
+    });
+  }
+
+  async function cadastrar() {
+    const nomeTratado = nome.trim();
+    const emailTratado = email.trim().toLowerCase();
+
+    if (!nomeTratado || !emailTratado || !senha.trim()) {
+      Alert.alert('Cadastro incompleto', 'Preencha nome, email e senha.');
+      return;
+    }
+
+    try {
+      setSalvando(true);
+
+      signIn({
+        name: nomeTratado,
+        email: emailTratado,
+        source: 'cadastro',
+      });
+
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Perfil' }],
+      });
+    } catch {
+      Alert.alert('Erro', 'Nao foi possivel concluir o cadastro.');
+    } finally {
+      setSalvando(false);
+    }
   }
 
   return (
     <View style={globalStyles.screen}>
-      <SafeAreaView style={globalStyles.safe}>
-        <ScrollView contentContainerStyle={[globalStyles.content, { paddingTop: 12 }]}>
-          <Header title="Perfil da missao" subtitle="Dados do operador e da estufa inteligente monitorada." />
+      <ImageBackground source={require('../assets/fundo.png')} resizeMode="cover" style={globalStyles.backgroundImage}>
+        <View style={globalStyles.overlay}>
+          <SafeAreaView style={globalStyles.safe}>
+            <ScrollView
+              keyboardShouldPersistTaps="handled"
+              contentContainerStyle={[
+                globalStyles.content,
+                {
+                  flexGrow: 1,
+                  justifyContent: 'center',
+                  paddingTop: 8,
+                  paddingBottom: 36,
+                },
+              ]}
+            >
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Voltar para a tela inicial"
+                onPress={voltarInicio}
+                style={{
+                  width: 42,
+                  height: 42,
+                  borderRadius: 14,
+                  borderWidth: 1,
+                  borderColor: theme.colors.border,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: 'rgba(255,255,255,0.03)',
+                  marginBottom: 18,
+                }}
+              >
+                <Text style={{ color: theme.colors.text, fontSize: 18, fontWeight: '900' }}>{'<'}</Text>
+              </Pressable>
 
-          <View style={[globalStyles.card, { gap: 14 }]}>
-            <View>
-              <Text style={globalStyles.label}>Integrantes / operador</Text>
-              <TextInput value={nome} onChangeText={setNome} style={globalStyles.input} placeholderTextColor={theme.colors.muted} />
-            </View>
-            <View>
-              <Text style={globalStyles.label}>Estufa</Text>
-              <TextInput value={estufa} onChangeText={setEstufa} style={globalStyles.input} placeholderTextColor={theme.colors.muted} />
-            </View>
-            <View>
-              <Text style={globalStyles.label}>Local</Text>
-              <TextInput value={local} onChangeText={setLocal} style={globalStyles.input} placeholderTextColor={theme.colors.muted} />
-            </View>
-            <Pressable style={globalStyles.button} onPress={salvarPerfil}>
-              <Text style={globalStyles.buttonText}>Salvar perfil</Text>
-            </Pressable>
-          </View>
-        </ScrollView>
-        <BottomNavigation navigation={navigation} active="Cadastro" />
-      </SafeAreaView>
+              <Image
+                source={require('../assets/logo.png')}
+                resizeMode="contain"
+                style={{ width: 170, height: 70, alignSelf: 'center', marginBottom: 18 }}
+              />
+
+              <View style={{ alignItems: 'center', marginBottom: 18 }}>
+                <Text style={{ color: theme.colors.text, fontSize: 28, fontWeight: '900' }}>Cadastro</Text>
+                <Text
+                  style={{
+                    color: theme.colors.muted,
+                    fontSize: 14,
+                    lineHeight: 21,
+                    textAlign: 'center',
+                    marginTop: 6,
+                    maxWidth: 280,
+                  }}
+                >
+                  Crie sua conta para entrar no app e começar sem complicação.
+                </Text>
+              </View>
+
+              <View style={[globalStyles.cardStrong, { borderRadius: 18, paddingVertical: 22, gap: 14 }]}>
+                <View>
+                  <Text style={globalStyles.label}>Nome</Text>
+                  <TextInput
+                    value={nome}
+                    onChangeText={setNome}
+                    placeholder="Digite seu nome"
+                    placeholderTextColor={theme.colors.muted}
+                    style={globalStyles.input}
+                  />
+                </View>
+
+                <View>
+                  <Text style={globalStyles.label}>Email</Text>
+                  <TextInput
+                    value={email}
+                    onChangeText={setEmail}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    placeholder="Digite seu email"
+                    placeholderTextColor={theme.colors.muted}
+                    style={globalStyles.input}
+                  />
+                </View>
+
+                <View>
+                  <Text style={globalStyles.label}>Senha</Text>
+                  <TextInput
+                    value={senha}
+                    onChangeText={setSenha}
+                    secureTextEntry
+                    placeholder="Digite sua senha"
+                    placeholderTextColor={theme.colors.muted}
+                    style={globalStyles.input}
+                  />
+                </View>
+
+                <Pressable
+                  style={[globalStyles.button, { marginTop: 6, marginHorizontal: 20 }]}
+                  onPress={cadastrar}
+                  disabled={salvando}
+                >
+                  <Text style={globalStyles.buttonText}>{salvando ? 'Salvando...' : 'Cadastrar'}</Text>
+                </Pressable>
+              </View>
+            </ScrollView>
+          </SafeAreaView>
+        </View>
+      </ImageBackground>
     </View>
   );
 }
