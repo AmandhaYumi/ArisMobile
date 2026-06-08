@@ -16,23 +16,20 @@ import {
 } from 'react-native';
 import { getApiBaseUrl } from '../services/api';
 import {
-  criarCultura,
-  atualizarCultura,
-  listarCulturas,
-  removerCultura,
-} from '../services/culturasService';
+  criarEstufa,
+  atualizarEstufa,
+  listarEstufas,
+  removerEstufa,
+} from '../services/estufasService';
 
 const emptyForm = {
   nome: '',
-  estufaId: '',
-  tempMin: '',
-  tempMax: '',
-  umidadeMin: '',
-  umidadeMax: '',
+  localizacao: '',
+  usuarioId: '',
 };
 
-const Plantacoes = () => {
-  const [culturas, setCulturas] = useState([]);
+const Estufas = () => {
+  const [estufas, setEstufas] = useState([]);
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -40,13 +37,13 @@ const Plantacoes = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
 
-  const carregarCulturas = async () => {
+  const carregarEstufas = async () => {
     try {
       setError('');
-      const data = await listarCulturas();
-      setCulturas(data);
+      const data = await listarEstufas();
+      setEstufas(data);
     } catch (err) {
-      setError(err.message || 'Não foi possível carregar as culturas.');
+      setError(err.message || 'Não foi possível carregar as estufas.');
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -54,7 +51,7 @@ const Plantacoes = () => {
   };
 
   useEffect(() => {
-    carregarCulturas();
+    carregarEstufas();
   }, []);
 
   const limparFormulario = () => {
@@ -66,29 +63,18 @@ const Plantacoes = () => {
     setEditingId(item.id);
     setForm({
       nome: String(item.nome ?? ''),
-      estufaId: String(item.estufaId ?? ''),
-      tempMin: String(item.tempMin ?? ''),
-      tempMax: String(item.tempMax ?? ''),
-      umidadeMin: String(item.umidadeMin ?? ''),
-      umidadeMax: String(item.umidadeMax ?? ''),
+      localizacao: String(item.localizacao ?? ''),
+      usuarioId: String(item.usuarioId ?? ''),
     });
   };
 
   const validarFormulario = () => {
     if (!form.nome.trim()) {
-      return 'Informe o nome da cultura.';
+      return 'Informe o nome da estufa.';
     }
 
-    if (!form.estufaId.toString().trim()) {
-      return 'Informe o ID da estufa.';
-    }
-
-    if (!form.tempMin.toString().trim() || !form.tempMax.toString().trim()) {
-      return 'Informe os limites de temperatura.';
-    }
-
-    if (!form.umidadeMin.toString().trim() || !form.umidadeMax.toString().trim()) {
-      return 'Informe os limites de umidade.';
+    if (!form.usuarioId.toString().trim()) {
+      return 'Informe o ID do usuário responsável.';
     }
 
     return '';
@@ -106,24 +92,24 @@ const Plantacoes = () => {
       setSaving(true);
 
       if (editingId) {
-        await atualizarCultura(editingId, form);
-        Alert.alert('Sucesso', 'Cultura atualizada com sucesso.');
+        await atualizarEstufa(editingId, form);
+        Alert.alert('Sucesso', 'Estufa atualizada com sucesso.');
       } else {
-        await criarCultura(form);
-        Alert.alert('Sucesso', 'Cultura cadastrada com sucesso.');
+        await criarEstufa(form);
+        Alert.alert('Sucesso', 'Estufa cadastrada com sucesso.');
       }
 
       limparFormulario();
-      await carregarCulturas();
+      await carregarEstufas();
     } catch (err) {
-      Alert.alert('Erro', err.message || 'Não foi possível salvar a cultura.');
+      Alert.alert('Erro', err.message || 'Não foi possível salvar a estufa.');
     } finally {
       setSaving(false);
     }
   };
 
   const confirmarExclusao = (item) => {
-    Alert.alert('Excluir cultura', `Deseja excluir "${item.nome}"?`, [
+    Alert.alert('Excluir estufa', `Deseja excluir "${item.nome}"?`, [
       { text: 'Cancelar', style: 'cancel' },
       {
         text: 'Excluir',
@@ -131,14 +117,14 @@ const Plantacoes = () => {
         onPress: async () => {
           try {
             setSaving(true);
-            await removerCultura(item.id);
-            Alert.alert('Sucesso', 'Cultura removida com sucesso.');
+            await removerEstufa(item.id);
+            Alert.alert('Sucesso', 'Estufa removida com sucesso.');
             if (editingId === item.id) {
               limparFormulario();
             }
-            await carregarCulturas();
+            await carregarEstufas();
           } catch (err) {
-            Alert.alert('Erro', err.message || 'Não foi possível excluir a cultura.');
+            Alert.alert('Erro', err.message || 'Não foi possível excluir a estufa.');
           } finally {
             setSaving(false);
           }
@@ -152,19 +138,14 @@ const Plantacoes = () => {
       <View style={styles.cardHeader}>
         <View style={{ flex: 1 }}>
           <Text style={styles.cardTitle}>{item.nome}</Text>
-          <Text style={styles.cardSubtitle}>Estufa #{item.estufaId}</Text>
+          <Text style={styles.cardSubtitle}>{item.localizacao || 'Sem localização'}</Text>
         </View>
         <View style={styles.badge}>
           <Text style={styles.badgeText}>ID {item.id}</Text>
         </View>
       </View>
 
-      <Text style={styles.cardText}>
-        Temperatura: {item.tempMin}°C a {item.tempMax}°C
-      </Text>
-      <Text style={styles.cardText}>
-        Umidade: {item.umidadeMin}% a {item.umidadeMax}%
-      </Text>
+      <Text style={styles.cardText}>Usuário responsável: {item.usuarioId}</Text>
 
       <View style={styles.rowActions}>
         <Pressable style={[styles.actionButton, styles.editButton]} onPress={() => preencherEdicao(item)}>
@@ -188,97 +169,59 @@ const Plantacoes = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <FlatList
-          data={culturas}
+          data={estufas}
           keyExtractor={(item) => String(item.id)}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => {
-            setRefreshing(true);
-            carregarCulturas();
-          }} />}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={() => {
+                setRefreshing(true);
+                carregarEstufas();
+              }}
+            />
+          }
           ListHeaderComponent={(
             <ScrollView scrollEnabled={false}>
               <View style={styles.header}>
                 <Text style={styles.kicker}>ARIS</Text>
-                <Text style={styles.title}>Culturas conectadas</Text>
+                <Text style={styles.title}>Estufas inteligentes</Text>
                 <Text style={styles.subtitle}>
-                  Cadastre e gerencie as culturas da solução espacial com dados vindos da API.
+                  Gerencie as estufas conectadas ao backend .NET com dados reais da API.
                 </Text>
               </View>
 
               <View style={styles.formCard}>
                 <Text style={styles.sectionTitle}>
-                  {editingId ? `Editando cultura #${editingId}` : 'Nova cultura'}
+                  {editingId ? `Editando estufa #${editingId}` : 'Nova estufa'}
                 </Text>
 
                 <Text style={styles.label}>Nome</Text>
                 <TextInput
                   style={styles.input}
-                  placeholder="Ex.: Alface"
+                  placeholder="Ex.: Estufa Solar A"
                   placeholderTextColor="#7e9299"
                   value={form.nome}
                   onChangeText={(value) => setForm((current) => ({ ...current, nome: value }))}
                 />
 
-                <Text style={styles.label}>ID da Estufa</Text>
+                <Text style={styles.label}>Localização</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Ex.: São Paulo - SP"
+                  placeholderTextColor="#7e9299"
+                  value={form.localizacao}
+                  onChangeText={(value) => setForm((current) => ({ ...current, localizacao: value }))}
+                />
+
+                <Text style={styles.label}>ID do usuário responsável</Text>
                 <TextInput
                   style={styles.input}
                   placeholder="Ex.: 1"
                   placeholderTextColor="#7e9299"
                   keyboardType="numeric"
-                  value={form.estufaId}
-                  onChangeText={(value) => setForm((current) => ({ ...current, estufaId: value }))}
+                  value={form.usuarioId}
+                  onChangeText={(value) => setForm((current) => ({ ...current, usuarioId: value }))}
                 />
-
-                <View style={styles.grid}>
-                  <View style={styles.gridItem}>
-                    <Text style={styles.label}>Temp. mín.</Text>
-                    <TextInput
-                      style={styles.input}
-                      placeholder="10"
-                      placeholderTextColor="#7e9299"
-                      keyboardType="numeric"
-                      value={form.tempMin}
-                      onChangeText={(value) => setForm((current) => ({ ...current, tempMin: value }))}
-                    />
-                  </View>
-
-                  <View style={styles.gridItem}>
-                    <Text style={styles.label}>Temp. máx.</Text>
-                    <TextInput
-                      style={styles.input}
-                      placeholder="25"
-                      placeholderTextColor="#7e9299"
-                      keyboardType="numeric"
-                      value={form.tempMax}
-                      onChangeText={(value) => setForm((current) => ({ ...current, tempMax: value }))}
-                    />
-                  </View>
-                </View>
-
-                <View style={styles.grid}>
-                  <View style={styles.gridItem}>
-                    <Text style={styles.label}>Umid. mín.</Text>
-                    <TextInput
-                      style={styles.input}
-                      placeholder="60"
-                      placeholderTextColor="#7e9299"
-                      keyboardType="numeric"
-                      value={form.umidadeMin}
-                      onChangeText={(value) => setForm((current) => ({ ...current, umidadeMin: value }))}
-                    />
-                  </View>
-
-                  <View style={styles.gridItem}>
-                    <Text style={styles.label}>Umid. máx.</Text>
-                    <TextInput
-                      style={styles.input}
-                      placeholder="80"
-                      placeholderTextColor="#7e9299"
-                      keyboardType="numeric"
-                      value={form.umidadeMax}
-                      onChangeText={(value) => setForm((current) => ({ ...current, umidadeMax: value }))}
-                    />
-                  </View>
-                </View>
 
                 <View style={styles.rowActions}>
                   <Pressable style={styles.primaryButton} onPress={salvar} disabled={saving}>
@@ -304,7 +247,7 @@ const Plantacoes = () => {
               </View>
 
               <View style={styles.listHeader}>
-                <Text style={styles.sectionTitle}>Culturas cadastradas</Text>
+                <Text style={styles.sectionTitle}>Estufas cadastradas</Text>
                 {loading ? <ActivityIndicator color="#8ed3c7" /> : null}
               </View>
 
@@ -316,9 +259,9 @@ const Plantacoes = () => {
           ListEmptyComponent={
             !loading ? (
               <View style={styles.emptyState}>
-                <Text style={styles.emptyTitle}>Nenhuma cultura cadastrada</Text>
+                <Text style={styles.emptyTitle}>Nenhuma estufa cadastrada</Text>
                 <Text style={styles.emptySubtitle}>
-                  Use o formulário acima para criar o primeiro registro.
+                  Use o formulário acima para criar a primeira estufa.
                 </Text>
               </View>
             ) : null
@@ -394,13 +337,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 13,
     fontSize: 15,
-  },
-  grid: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  gridItem: {
-    flex: 1,
   },
   rowActions: {
     flexDirection: 'row',
@@ -517,4 +453,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Plantacoes;
+export default Estufas;

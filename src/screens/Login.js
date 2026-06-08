@@ -1,146 +1,194 @@
 import React, { useState } from 'react';
-import { Alert, Image, ImageBackground, Pressable, SafeAreaView, ScrollView, Text, TextInput, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
+import api, { getApiBaseUrl, setAuthToken } from '../services/api';
 import { useAuth } from '../context/AuthContext';
-import { globalStyles } from '../styles/globalStyles';
-import { theme } from '../styles/tema';
 
-export default function Login({ navigation }) {
+const Login = () => {
   const { signIn } = useAuth();
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
-  const [entrando, setEntrando] = useState(false);
+  const [email, setEmail] = useState('admin@aris.local');
+  const [senha, setSenha] = useState('Admin@123');
+  const [loading, setLoading] = useState(false);
 
-  function voltarInicio() {
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Inicial' }],
-    });
-  }
+  const extractToken = (data) =>
+    data?.token ?? data?.accessToken ?? data?.jwt ?? data?.jwtToken ?? data?.access_token ?? null;
 
-  async function entrar() {
-    const emailTratado = email.trim().toLowerCase();
+  const extractUser = (data) =>
+    data?.user ?? data?.usuario ?? data?.data?.user ?? data?.data?.usuario ?? null;
 
-    if (!emailTratado || !senha.trim()) {
-      Alert.alert('Login incompleto', 'Informe email e senha.');
+  const handleLogin = async () => {
+    const emailTrimmed = email.trim().toLowerCase();
+
+    if (!emailTrimmed || !senha.trim()) {
+      Alert.alert('Atenção', 'Preencha e-mail e senha para entrar.');
       return;
     }
 
     try {
-      setEntrando(true);
-
-      signIn({
-        name: emailTratado.split('@')[0] || 'Usuario',
-        email: emailTratado,
-        source: 'login',
+      setLoading(true);
+      const response = await api.post('/auth/login', {
+        email: emailTrimmed,
+        senha,
       });
 
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Perfil' }],
-      });
-    } catch {
-      Alert.alert('Erro', 'Nao foi possivel fazer login.');
+      const token = extractToken(response.data);
+      const user = extractUser(response.data) ?? { email: emailTrimmed };
+
+      if (!token) {
+        throw new Error('A API não retornou o token JWT.');
+      }
+
+      setAuthToken(token);
+      signIn({ user, token });
+    } catch (error) {
+      Alert.alert('Erro no login', error.message || 'Não foi possível autenticar.');
     } finally {
-      setEntrando(false);
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <View style={globalStyles.screen}>
-      <ImageBackground source={require('../assets/fundo.png')} resizeMode="cover" style={globalStyles.backgroundImage}>
-        <View style={globalStyles.overlay}>
-          <SafeAreaView style={globalStyles.safe}>
-            <ScrollView
-              keyboardShouldPersistTaps="handled"
-              contentContainerStyle={[
-                globalStyles.content,
-                {
-                  flexGrow: 1,
-                  justifyContent: 'center',
-                  paddingTop: 8,
-                  paddingBottom: 36,
-                },
-              ]}
-            >
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel="Voltar para a tela inicial"
-                onPress={voltarInicio}
-                style={{
-                  width: 42,
-                  height: 42,
-                  borderRadius: 14,
-                  borderWidth: 1,
-                  borderColor: theme.colors.border,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: 'rgba(255,255,255,0.03)',
-                  marginBottom: 18,
-                }}
-              >
-                <Text style={{ color: theme.colors.text, fontSize: 18, fontWeight: '900' }}>{'<'}</Text>
-              </Pressable>
+    <SafeAreaView style={styles.safeArea}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+          <View style={styles.hero}>
+            <Text style={styles.kicker}>ARIS</Text>
+            <Text style={styles.title}>Agricultura Inteligente Espacial</Text>
+            <Text style={styles.subtitle}>
+              Acesse o painel da solução conectada ao backend .NET.
+            </Text>
+          </View>
 
-              <Image
-                source={require('../assets/logo.png')}
-                resizeMode="contain"
-                style={{ width: 170, height: 70, alignSelf: 'center', marginBottom: 18 }}
-              />
+          <View style={styles.card}>
+            <Text style={styles.label}>E-mail</Text>
+            <TextInput
+              style={styles.input}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              placeholder="admin@aris.local"
+              placeholderTextColor="#8b9aa6"
+              value={email}
+              onChangeText={setEmail}
+            />
 
-              <View style={{ alignItems: 'center', marginBottom: 18 }}>
-                <Text style={{ color: theme.colors.text, fontSize: 28, fontWeight: '900' }}>Login</Text>
-                <Text
-                  style={{
-                    color: theme.colors.muted,
-                    fontSize: 14,
-                    lineHeight: 21,
-                    textAlign: 'center',
-                    marginTop: 6,
-                    maxWidth: 280,
-                  }}
-                >
-                  Entre para continuar de onde parou.
-                </Text>
-              </View>
+            <Text style={styles.label}>Senha</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Sua senha"
+              placeholderTextColor="#8b9aa6"
+              secureTextEntry
+              value={senha}
+              onChangeText={setSenha}
+            />
 
-              <View style={[globalStyles.cardStrong, { borderRadius: 18, paddingVertical: 22, gap: 14 }]}>
-                <View>
-                  <Text style={globalStyles.label}>Email</Text>
-                  <TextInput
-                    value={email}
-                    onChangeText={setEmail}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    placeholder="Digite seu email"
-                    placeholderTextColor={theme.colors.muted}
-                    style={globalStyles.input}
-                  />
-                </View>
+            <Pressable style={styles.button} onPress={handleLogin} disabled={loading}>
+              {loading ? (
+                <ActivityIndicator color="#08161b" />
+              ) : (
+                <Text style={styles.buttonText}>Entrar</Text>
+              )}
+            </Pressable>
 
-                <View>
-                  <Text style={globalStyles.label}>Senha</Text>
-                  <TextInput
-                    value={senha}
-                    onChangeText={setSenha}
-                    secureTextEntry
-                    placeholder="Digite sua senha"
-                    placeholderTextColor={theme.colors.muted}
-                    style={globalStyles.input}
-                  />
-                </View>
-
-                <Pressable
-                  style={[globalStyles.button, { marginTop: 6, marginHorizontal: 20 }]}
-                  onPress={entrar}
-                  disabled={entrando}
-                >
-                  <Text style={globalStyles.buttonText}>{entrando ? 'Entrando...' : 'Login'}</Text>
-                </Pressable>
-              </View>
-            </ScrollView>
-          </SafeAreaView>
-        </View>
-      </ImageBackground>
-    </View>
+            <Text style={styles.helper}>
+              API configurada em {getApiBaseUrl()}
+            </Text>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#08161b',
+  },
+  container: {
+    flex: 1,
+  },
+  content: {
+    flexGrow: 1,
+    padding: 24,
+    justifyContent: 'center',
+  },
+  hero: {
+    marginBottom: 24,
+  },
+  kicker: {
+    color: '#8ed3c7',
+    fontSize: 12,
+    fontWeight: '700',
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+  },
+  title: {
+    color: '#f4f7f7',
+    fontSize: 32,
+    fontWeight: '800',
+    marginTop: 8,
+    marginBottom: 8,
+  },
+  subtitle: {
+    color: '#a8b8bf',
+    fontSize: 15,
+    lineHeight: 22,
+  },
+  card: {
+    backgroundColor: '#102229',
+    borderRadius: 24,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: '#1d3841',
+  },
+  label: {
+    color: '#dce7ea',
+    fontSize: 14,
+    fontWeight: '700',
+    marginBottom: 8,
+    marginTop: 12,
+  },
+  input: {
+    backgroundColor: '#0a1519',
+    color: '#f4f7f7',
+    borderWidth: 1,
+    borderColor: '#23414b',
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
+    fontSize: 16,
+  },
+  button: {
+    marginTop: 20,
+    backgroundColor: '#8ed3c7',
+    borderRadius: 14,
+    paddingVertical: 15,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#08161b',
+    fontSize: 16,
+    fontWeight: '800',
+  },
+  helper: {
+    marginTop: 16,
+    color: '#7f97a0',
+    fontSize: 12,
+  },
+});
+
+export default Login;
